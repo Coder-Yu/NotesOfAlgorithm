@@ -1,0 +1,30 @@
+\documentclass[12pt, oneside]{ctexbook}
+
+\usepackage{times}                       % 使用 Times New Roman 字体
+\usepackage{CJK,CJKnumb,CJKulem}         % 中文支持宏包
+\usepackage{color}                       % 支持彩色
+\usepackage{verbatim}
+\usepackage{makeidx}                            % 建立索引宏包
+%\usepackage[dvipdfm]{hyperref} % pdf目录
+
+\makeindex % 建立关键词的索引
+
+%———————————正文———————————–
+\begin{document} % 开始正文
+\begin{CJK*}{GBK}{song}                           % 开始中文环境
+
+
+\author{我}
+\title{哈哈}
+\maketitle% 标题
+
+\tableofcontents % 目录
+
+\chapter{一} % 这里编译不通过
+\chapter{一} % 这里编译不通过
+\chapter{一} % 这里编译不通过
+
+\printindex %打印索引
+
+\end{CJK*}     % 结束中文环境
+\end{document} % 结束正文
