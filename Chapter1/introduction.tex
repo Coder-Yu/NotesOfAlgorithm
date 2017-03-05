@@ -1,30 +1,158 @@
-\documentclass[12pt, oneside]{ctexbook}
-
+\documentclass[16px]{ctexart}
+\usepackage{geometry}
 \usepackage{times}                       % 使用 Times New Roman 字体
 \usepackage{CJK,CJKnumb,CJKulem}         % 中文支持宏包
 \usepackage{color}                       % 支持彩色
 \usepackage{verbatim}
-\usepackage{makeidx}                            % 建立索引宏包
+\usepackage{enumitem}
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{xcolor}
+\graphicspath{ {pic/} }
+\geometry{left=2.0cm,right=2.0cm, top=2.0cm, bottom = 2.5cm}
+
 %\usepackage[dvipdfm]{hyperref} % pdf目录
-
-\makeindex % 建立关键词的索引
-
 %———————————正文———————————–
 \begin{document} % 开始正文
-\begin{CJK*}{GBK}{song}                           % 开始中文环境
+\begin{CJK*}{GBK}{kai}                           % 开始中文环境
+
+\title{第一章 算法效率分析基础}
+\author{整理者：Yu \\ 资料整理自互联网，仅供学习用途}
+\maketitle
+\par
+同一问题可用不同算法解决，而一个算法的质量优劣将影响到算法乃至程序的效率。算法分析的目的在于选择合适算法和改进算法。一个算法的评价主要从时间复杂度和空间复杂度来考虑。随着硬件技术的不断发展和价格走低，空间复杂度在大部分情况下已经不是需要重点关注的问题了，然而时间效率的重要性并没有减弱到这种程度。本章将主要介绍时间复杂度。
+\\
+\par
+\textbf{为什么要进行算法分析？}
+\begin{itemize}
+\item 预测算法所需要的资源
+    \begin{itemize}
+    \item 计算时间（CPU 消耗）
+    \item 内存空间（RAM 消耗）
+    \item 通信时间（带宽消耗）
+    \end{itemize}
+\item 预测算法的运行时间
+    \begin{itemize}
+    \item 在给定输入规模时，所执行的基本操作数量。
+    \item 或者称为算法复杂度（Algorithm Complexity）
+    \end{itemize}
+\end{itemize}
+\
+\par
+\textbf{如何衡量算法复杂度？}
+    \begin{itemize}
+    \item 内存（Memory）
+    \item 时间（Time）
+    \item 指令的数量（Number of Steps）
+    \item 特定操作的数量
+    \item 磁盘访问数量
+    \item 网络包数量
+    \item 渐进复杂度（Asymptotic Complexity）
+    \end{itemize}
+\
+\par
+\textbf{算法的运行时间与什么相关？}
+    \begin{itemize}
+    \item 取决于输入的数据的初始状态。（例如：如果数据已经是排好序的，时间消耗可能会减少。）
+    \item 取决于输入数据的规模。（例如：10个数排序 和 $10^{8}$个数排序）
+    \item 取决于运行时间的上限。（因为运行时间的上限是对使用者的承诺。）
+    \end{itemize}
+\
+\par
+\textbf{算法分析的种类：}
+    \begin{itemize}
+    \item 最坏情况（Worst Case）：任意输入规模的最大运行时间。（Usually）
+    \item 平均情况（Average Case）：任意输入规模的期待运行时间。（Sometimes）
+    \item 最佳情况（Best Case）：通常最佳情况不会出现。（Bogus）
+    \end{itemize}
 
 
-\author{我}
-\title{哈哈}
-\maketitle% 标题
+例如，在一个长度为 n 的列表中顺序搜索指定的值，则
+    \begin{enumerate}[label=(\arabic*)]
+    \item 最坏情况：n 次比较
+    \item 平均情况：n/2 次比较
+    \item 最佳情况：1 次比较
+    \end{enumerate}
 
-\tableofcontents % 目录
 
-\chapter{一} % 这里编译不通过
-\chapter{一} % 这里编译不通过
-\chapter{一} % 这里编译不通过
+而实际中，我们一般仅考量算法在最坏情况下的运行情况，也就是对于规模为 n 的任何输入，算法的最长运行时间。这样做的理由是：
+    \begin{enumerate}[label=(\arabic*)]
+    \item 一个算法的最坏情况运行时间是在任何输入下运行时间的一个上界（Upper Bound）。
+    \item 对于某些算法，最坏情况出现的较为频繁。
+    \item 大体上看，平均情况通常与最坏情况一样差。
+    \end{enumerate}
+算法分析要保持大局观（Big Idea），其基本思路：
+    \begin{enumerate}[label=(\arabic*)]
+    \item 忽略掉那些依赖于机器的常量。
+    \item 关注运行时间的增长趋势。
+    \end{enumerate}
+比如：$T(n) = 73n^{3} + 29n^{2} + 8888$ 的趋势就相当于 T(n) = Θ($n^{3}$)。
+\\
+渐近记号（Asymptotic Notation）通常有 O、 $\Theta$ 和 $\Omega$ 记号法。$\Theta$ 记号渐进地给出了一个函数的上界和下界，当只有渐近上界时使用 O 记号，当只有渐近下界时使用 $\Omega$ 记号。尽管技术上 $\Theta$ 记号较为准确，但通常仍然使用 O 记号表示。例如,线性复杂度 $O(n)$ 表示每个元素都要被处理一次。平方复杂度 $O(n^{2})$ 表示每个元素都要被处理 n 次。
+\begin{table*}[!htbp]%[tb]
+%\renewcommand\arraystretch{0.9}
+\caption{渐进记号表示法}
+\label{table:1}
+\begin{center}
+\begin{tabular}{*{3}{c}}
+\toprule
+Notation & Intuition & Informal Definition \\
+\midrule
+\textbf{$f(n)\in O(g(n)$} & f is bounded above by g asymptotically	& $\exists n>n_{0}, |f(n)|\leq g(n)\cdot k$ \\
+\textbf{$f(n)\in \Omega(g(n)$} & f is bounded below by g asymptotically	& $\exists n>n_{0}, |f(n)|\geq g(n)\cdot k$ \\
+\textbf{$f(n)\in \Theta(g(n)$} & f is bounded above and below by g asymptotically	& $\exists n>n_{0}, g(n)\cdot k_{1}\leq f(n) \leq g(n)\cdot k_{2}$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{table*}
+\\
+\textbf{分析非递归算法的效率的通用方案}
+   \begin{enumerate}[label=(\arabic*)]
+    \item 决定用哪个(哪些)参数作为输入规模的度量
+    \item 找出算法的基本操作（作为一规律，它总是位于算法的最内层循环中）。
+    \item 检查基本操作的执行次数是否只依赖输入规模。如果它还依赖一些其他的特性，则最差效率、平均效率以及最优效率（如果必要）需要分别研究。
+    \item 建立一个算法基本操作执行次数的求和表达式。
+    \item 利用求和运算的标公式和法则来建立一个操作次数的闭合公式，或者至少确定它的增长次数。
+    \end{enumerate}
+\begin{figure}[!t]
+\centering
+\includegraphics[width=.8\textwidth]{p1.png}
+\caption{基本的渐进效率图像}
+\label{fig:1}
+\end{figure}
 
-\printindex %打印索引
+\begin{table*}%[tb]
+%\renewcommand\arraystretch{0.9}
+\caption{基本的渐进效率类型}
+\label{table:2}
+\begin{center}
+\begin{tabular}{*{2}{c}}
+\toprule
+复杂度 & 标记符号 \\
+\midrule
+常量（Constant） & $O(1)$\\
+对数（Logarithmic）& $O(\log _{2}n)$\\
+线性（Linear）& $O(n)$ 	\\
+平方（Quadratic）& $O(n^{2})$ \\
+立方（Cubic）& $O(n^{3})$ \\
+指数（Exponential）& $O(2^{n}), O(k^{n}), O(n!)$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{table*}
+
+\begin{lstlisting}[language=Python,keywordstyle=\color{blue!70}]
+def FindMaxElement(array):
+    max = array[0]
+    for i in range(len(array):
+        if array[i] > max:
+            max = array[i]
+\end{lstlisting}
+
+以以上代码为例，代码中最基本的执行语句为比较array与max的大小，其执行数量约为$n*(n-1)/2$，所以算法复杂度为$O(n^{2})$。
 
 \end{CJK*}     % 结束中文环境
+
 \end{document} % 结束正文
