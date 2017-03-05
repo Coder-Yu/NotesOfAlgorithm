@@ -13,12 +13,13 @@
 \graphicspath{ {pic/} }
 \geometry{left=2.0cm,right=2.0cm, top=2.0cm, bottom = 2.5cm}
 
+
 %\usepackage[dvipdfm]{hyperref} % pdf目录
 %———————————正文———————————–
 \begin{document} % 开始正文
 \begin{CJK*}{GBK}{kai}                           % 开始中文环境
 
-\title{第一章 算法效率分析基础}
+\title{第一章  算法效率分析基础}
 \author{整理者：Yu \\ 资料整理自互联网，仅供学习用途}
 \maketitle
 \par
@@ -108,22 +109,7 @@ Notation & Intuition & Informal Definition \\
 \end{center}
 \end{table*}
 \\
-\textbf{分析非递归算法的效率的通用方案}
-   \begin{enumerate}[label=(\arabic*)]
-    \item 决定用哪个(哪些)参数作为输入规模的度量
-    \item 找出算法的基本操作（作为一规律，它总是位于算法的最内层循环中）。
-    \item 检查基本操作的执行次数是否只依赖输入规模。如果它还依赖一些其他的特性，则最差效率、平均效率以及最优效率（如果必要）需要分别研究。
-    \item 建立一个算法基本操作执行次数的求和表达式。
-    \item 利用求和运算的标公式和法则来建立一个操作次数的闭合公式，或者至少确定它的增长次数。
-    \end{enumerate}
-\begin{figure}[!t]
-\centering
-\includegraphics[width=.8\textwidth]{p1.png}
-\caption{基本的渐进效率图像}
-\label{fig:1}
-\end{figure}
-
-\begin{table*}%[tb]
+\begin{table*}[!htbp]%[tb]
 %\renewcommand\arraystretch{0.9}
 \caption{基本的渐进效率类型}
 \label{table:2}
@@ -143,15 +129,39 @@ Notation & Intuition & Informal Definition \\
 \end{center}
 \end{table*}
 
+\begin{figure}[!htbp]%[tb]
+\centering
+\includegraphics[width=.8\textwidth]{p1.png}
+\caption{基本的渐进效率图像}
+\label{fig:1}
+\end{figure}
+
+\textbf{求解算法的时间复杂度的具体步骤：}
+   \begin{enumerate}[label=(\arabic*)]
+   \item 找出算法中的基本语句；算法中执行次数最多的那条语句就是基本语句，通常是最内层循环的循环体。
+　 \item 计算基本语句的执行次数的数量级；只需计算基本语句执行次数的数量级，这就意味着只要保证基本语句执行次数的函数中的最高次幂正确即可，可以忽略所有低次幂和最高次幂的系数。这样能够简化算法分析，并且使注意力集中在最重要的一点上：增长率。
+　\item 用大Ο记号表示算法的时间性能。将基本语句执行次数的数量级放入大Ο记号中。如果算法中包含嵌套的循环，则基本语句通常是最内层的循环体，如果算法中包含并列的循环，则将并列循环的时间复杂度相加。例如:
+\end{enumerate}
+
+\begin{lstlisting}[language=C,keywordstyle=\color{blue!70}]
+for (i=1; i<=n; i++)
+    x++;
+for (i=1; i<=n; i++)
+    for (j=1; j<=n; j++)
+        x++;
+\end{lstlisting}
+第一个for循环的时间复杂度为Ο(n)，第二个for循环的时间复杂度为Ο(n2)，则整个算法的时间复杂度为Ο(n+n2)=Ο(n2)。
+
+
 \begin{lstlisting}[language=Python,keywordstyle=\color{blue!70}]
 def FindMaxElement(array):
     max = array[0]
     for i in range(len(array):
         if array[i] > max:
-            max = array[i]
+          max = array[i]
 \end{lstlisting}
 
-以以上代码为例，代码中最基本的执行语句为比较array与max的大小，其执行数量约为$n*(n-1)/2$，所以算法复杂度为$O(n^{2})$。
+又如以上代码，其中最基本的执行语句为比较array与max的大小，其执行数量约为$n*(n-1)/2$，所以算法复杂度为$O(n^{2})$。
 
 \end{CJK*}     % 结束中文环境
 
